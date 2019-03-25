@@ -1,0 +1,294 @@
+#+TITLE: POWERSHELL INTERVIEW QUESTIONS
+#+AUTHOR: TOBY SLIGHT
+
+#+OPTIONS: toc:nil
+#+LaTeX_HEADER: \setlength{\parindent}{0in}
+#+LaTeX_HEADER: \usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+
+Candidate should be able to answer at least half of these. They get
+progressively harder, so if they are not able to answer any of the first four or
+five, there's little point continuing.\\
+
+Some questions contain child questions that are harder extensions of the
+parent. Again, no point asking the child question if they can't answer the
+parent.\\
+
+Being able to answer half only applies to parent questions. ie) Candidate needs
+to able answer half of all parent questions, not parent and child questions.
+
+* Question
+
+/*How would you learn more about a command you are unfamiliar with?*/
+
+#+BEGIN_SRC powershell
+Get-Help Some-Command
+#+END_SRC
+
+* Question
+
+/*What is the convention for naming powershell functions?*/\\
+
+~Verb-Noun~
+
+** Question
+
+/*How would you look up approved verbs?*/
+
+#+BEGIN_SRC powershell
+Get-Verb
+#+END_SRC
+
+* Question
+
+/*What command would you use to get all the properties of an object?*/
+
+#+BEGIN_SRC powershell
+$Object | Get-Member
+#+END_SRC
+
+* Question
+
+/*Explain the difference between an array and a hash table? Syntax?*/\\
+
+An array is a simple list of items, whereas a hash table is a list of key value
+pairs. A lookup on a hash table is significantly faster than iterating over an
+array.
+
+Both use @ symbol, but array uses parentheses, hash table uses curly
+braces. /N.B. Array can be defined more simply/
+
+#+BEGIN_SRC powershell
+  $Array = @(
+      'item1',
+      'item2',
+      'item3'
+  )
+
+  # this works, but is typically less readable..
+  $Array = 1,2,3,4,5
+
+  $HashTable = @{
+      Key1 = 'Value1'
+      Key2 = 'Value2'
+      Key3 = 'Value3'
+  }
+#+END_SRC
+
+** Question
+
+/*How would you access an element of each?*/
+
+#+BEGIN_SRC powershell
+# accesses 2nd element of array
+$Array[1]
+# accesses the value of the element with the key SomeKey
+$HashTable['SomeKey']
+#+END_SRC
+
+* Question
+
+/*When would you typically use a switch statement and why?*/\\
+
+When you have a long list of ~if~, ~elseif~ conditions to check.\\
+
+Far more efficient, elegant and readable than lots of ~elseif~.
+
+* Question
+
+/*Please give one example of a fundamental difference between Powershell and
+bash, and one example of a fundamental similarity?*/\\
+
+Difference: Powershell is Object based, bash is text based.\\
+
+Similarity: Both adhere to Unix philosophy - do one thing, do it well and pipe
+small commands together.
+
+* Question
+
+/*What are the ? and % symbols aliases for?*/\\
+
+~?~ = Where-Object\\
+~%~ = ForEach-Object
+
+* Question
+
+/*Do you prefer to use aliases or full cmdlet names in scripts?*/\\
+
+It's bad practice to use aliases in scripts.
+
+* Question
+
+/*Explain what the pipeline is?*/\\
+
+The output from one command becomes the input to the next.
+
+* Question
+
+/*What is the significance of $_ in a pipe?*/\\
+
+It is the current value of the object in the pipeline. Also known as $PSItem.
+
+* Question
+
+/*When would you use Write-Host instead of Write-Output?*/\\
+
+When you don't care about capturing output in pipeline. When you need to have
+pretty colors!
+
+* Question
+
+/*Explain the difference between foreach and Foreach-Object?*/\\
+
+foreach is the 'normal' for loop syntax for iterating over a collection in the
+traditional way:
+
+#+BEGIN_SRC powershell
+  foreach ($element in $Array) {
+      Write-Host $element
+  }
+#+END_SRC
+
+ForEach-Object (or %) Processes data from the pipeline:
+
+#+BEGIN_SRC powershell
+  $Array | ForEach-Object { Write-Host $_ }
+#+END_SRC
+
+* Question
+
+/*How would you debug a script?*/
+
+#+BEGIN_SRC powershell
+Set-PSDebug -Trace 2
+#+END_SRC
+
+* Question
+
+/*What is the difference between a function and an advanced function?*/\\
+
+~[CmdletBinding]~ tag gives the function access to common powershell parameters
+used by built in cmdlets such as ~-Verbose~, ~-Debug~, ~-WhatIf~, etc
+
+* Question
+
+/*How do you implement proper pipelining support in a function?*/\\
+
+Add ~ValueFromPipeline~ tag to a parameter that will be the pipeline input.
+
+** Question
+
+/*Explain the purpose of begin, process and end blocks in a powershell
+function?*/
+
+- Begin executes before any objects from the pipeline are processed.
+
+- Process executes on each object passed in from the pipeline (in a similar
+  fashion to a for loop).
+
+- End executes after all the objects coming in from the pipeline have been
+  processed.
+
+* Question
+
+/*How would you go about writing your own powershell module?*/
+
+- Open ended. Must mention use of psm1 file.
+
+- Ideally use a wrapper psm1 file that dot sources other files and
+  directories. Use of module manifest file to define dependances, etc..
+
+* Question
+
+/*What does a recursive function do? Why is it useful?*/\\
+
+Calls itself. Divide and conquer approach is often simpler, more efficient and
+has less side effects than iterating over data structures.
+
+* Question
+
+/*How would you search for a user's SamAccountName using the active directory
+powershell module and return all the AD objects properties?*/
+
+#+BEGIN_SRC powershell
+Get-ADUser -Filter {Name -eq 'user name'} -Server dc.tld -Properties *
+#+END_SRC
+
+** Question
+
+/*How would you create a csv with the name and email address of all members of
+an AD Group*/
+
+#+BEGIN_SRC powershell
+     Get-ADGroup -Filter {Name -eq 'AD_Group_Name'} |
+       Get-ADGroupMember |
+       Get-ADUser -Properties name,EmailAddress |
+       Select-Object name,EmailAddress |
+       Export-Csv \path\to\group_members.csv
+#+END_SRC
+
+Worth stating that generally the ~-Server~ parameter needs to be used in real world..
+
+* Question
+
+/*What powershell command would you use to interact with a REST API?*/
+
+#+BEGIN_SRC powershell
+Invoke-RestMethod
+#+END_SRC
+
+** Question
+
+/*How would you store and access API credentials securely?*/\\
+
+Store:
+
+#+BEGIN_SRC powershell
+  ConvertTo-SecureString -AsPlainText -Force "apikeystring" |
+    ConvertFrom-SecureString |
+    Set-Content "EncryptedApiFile.txt"
+#+END_SRC
+
+Access:
+
+#+BEGIN_SRC powershell
+  $String = Get-Content "EncryptedApiFile.txt" | ConvertTo-SecureString
+  [System.Runtime.InteropServices.marshal]::PtrToStringAuto(
+      [System.Runtime.InteropServices.marshal]::SecureStringToBSTR($String)
+  )
+#+END_SRC
+
+* Question
+
+/*How would you validate an IP address?*/\\
+
+Easiest/Simplest is to check if it validates as internal powershell type
+~[ipaddress]~.
+
+#+BEGIN_SRC powershell
+  try {
+    [ipaddress]$IPAddr
+  } catch {
+    Write-Warning "Invalid IP."
+  }
+#+END_SRC
+
+However if they don't know about that, the following two answers are also
+acceptable:\\
+
+Split on dots and test type of each octet as 32 bit integer:
+
+#+BEGIN_SRC powershell
+  try {
+      $IPAddr.Split('.') | % { [Int32]$_ }
+  } catch {
+      Write-Warning "Invalid IP."
+  }
+#+END_SRC
+
+Use Regex:
+
+#+BEGIN_SRC powershell
+  if ($IPAddr -notmatch '^\d{3}\.\d{3}\.\d{3}\.\d{3}') {
+      Write-Warning "Invalid IP."
+  }
+#+END_SRC

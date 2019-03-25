@@ -1,0 +1,141 @@
+#+TITLE: LINUX INTERVIEW QUESTIONS
+#+AUTHOR: TOBY SLIGHT
+
+#+OPTIONS: toc:nil
+#+LaTeX_HEADER: \setlength{\parindent}{0in}
+#+LaTeX_HEADER: \usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+
+Candidate should be able to answer at least half of these. Some questions
+contain child questions that are harder extensions of the parent.\\
+
+Being able to answer half only applies to parent questions. ie) Candidate needs
+to able answer half of all parent questions, not parent and child questions.
+
+* Question
+
+/*What command would you use to find information on another command?*/\\
+
+~man~
+
+** Question
+
+/*What command would you use to find information on a topic without being
+specific?*/\\
+
+~apropos~
+
+* Question
+
+/*How would you use ssh to copy a directory to a remote machine?*/\\
+
+~scp -R /path/to/directory user@host:/remote/path~
+
+** Question
+
+/*How would you use ssh to execute a command on a remote machine*/\\
+
+~ssh user@host command~
+
+** Question
+
+/*How would you enable ssh public key authentication*/
+
+- Generate ssh keys on local machine using ~ssh-keygen~
+- Copy public key to remote machine using ~ssh-copy-id~
+
+* Question
+
+/*How would you get the cumulative size of a directory in a human readable
+format on a *nix system?*/\\
+
+~du -sh /path/to/directory~
+
+** Question
+
+/*How would you check the systems total disk usage in a human readable format on
+a *nix system?*/\\
+
+~df -h~
+
+** Question
+
+/*On a Unix based system what is the difference between a hard and a soft link?*/\\
+
+A soft link is just a pointer to another files inode, it doesn't contain the contents
+of the file. If the original file is deleted the soft link is broken. Can span
+filesystems.\\
+
+A hard link is a pointer to an inode shared by multiple files. Deleting any one
+pointer doesn't delete the inode. The inode only goes away when all hard links
+are deleted.
+
+* Question
+
+/*How would use chmod to change the permissions of a given file to only readable
+and writeable by it's owner, using both octal and symbolic notation*/\\
+
+~chmod 600 file.txt~
+
+~chmod u=rw,g=,o= file.txt~
+
+*** Question
+
+/*What umask should a user have so that they create files with 644 permissions
+and directories with 755 permissions?*/\\
+
+022 or 0022
+
+* Question
+
+/*What commands would you use to troubleshoot networking on a linux box (explain
+roughly what they do)?*/\\
+
+~ping~ - check connectivity.\\
+~traceroute~ - pinpoints which hop is the source of the problem.\\
+~route~ - check kernel routing table.\\
+~netstat~ - check kernel routing table.\\
+~host~ - query dns records.\\
+~nslookup~ - check dns records and dns server.\\
+~ifconfig~ - interface assignment.\\
+~ip~ - interface assignment.\\
+~ufw~ - check firewall status.\\
+~iptables~ - check kernel firewall status.
+
+** Question
+
+/*On a typical Linux box which files would you look at to check interface
+assignment and dns records?*/\\
+
+~/etc/network/interfaces~ - interface assignment\\
+~/etc/resolv.conf~ - dns records
+
+* Question
+
+/*How would you check the logs on a Linux system that uses systemd*/\\
+
+~journalctl~
+
+** Question
+
+/*How would you check the logs on a *nix system that didn't use systemd*/\\
+
+~/var/log/messages~ (or whatever file is relevant)
+
+** Question
+
+/*How would you view the kernel log messages on a *nix system*/\\
+
+~dmesg~
+
+* Question
+
+/*What is crontab*/\\
+
+Cron is a task scheduler. The crontab is the file that specifies what command
+will be executed at what time.
+
+** Question
+
+Explain the format of crontab?\\
+
+~<Min><Hour><MonthDay><Month><WeekDay><command/program to execute>~

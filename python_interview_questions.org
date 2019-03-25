@@ -1,0 +1,78 @@
+#+TITLE: PYTHON INTERVIEW QUESTIONS
+#+AUTHOR: TOBY SLIGHT
+
+#+OPTIONS: toc:nil
+#+LaTeX_HEADER: \setlength{\parindent}{0in}
+#+LaTeX_HEADER: \usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+
+Python knowledge is not a must have. However if the candidate claims to have it
+this might come in handy. Would be nice to have.\\
+
+* Question
+
+/*What is the difference between a tuple and a list?*/\\
+
+A tuple is immutable whereas a list is mutable.
+
+** Question
+
+/*What's the difference between a variable and an object?*/\\
+
+Variable is a reference to an object, not the object itself.
+
+* Question
+
+/*What is a dictionary and when might you use one?*/\\
+
+A dictionary is basically a synonym for a hash table.\\
+
+A collection of key value pairs.\\
+
+Easier/faster to compute that a list/array. Lookup on a hash table is
+significantly faster than iterating over a list or array style collection.
+
+* Question
+
+/*Explain what collection comprehension is?*/\\
+
+A concise way to create a new collection.\\
+
+List example:
+
+#+BEGIN_SRC python
+old_list = [1, 3, 5, 26, 28]
+new_list = [e for e in old_list if e < 10]
+print(new_list) # returns list of elements less than 10
+#+END_SRC
+
+* Question
+
+/*Explain inheritance and why you would use it?*/\\
+
+A way for new classes to receive the properties and methods of an existing
+class.\\
+
+Use for code re-usability.
+
+* Question
+
+/*What keyword defines a generator function and why would you want to use one?*/\\
+
+~yield~\\
+
+Far more memory efficient than normal iterators.\\
+
+Pipelining potential.
+
+* Question
+
+/*What are the differences between multi-threading and multiprocessing and when
+would you use each?*/\\
+
+Multi-threading uses same memory space and it's therefore affected by the GIL
+(Global Interpreter Lock).\\
+
+Multi-processing uses separate memory space and potentially CPU cores.\\
+
+Multi-threading is better for I/O bound programs and multi-processing is
+better for CPU bound programs.

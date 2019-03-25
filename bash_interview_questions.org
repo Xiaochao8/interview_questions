@@ -1,0 +1,207 @@
+#+TITLE: BASH INTERVIEW QUESTIONS
+#+AUTHOR: TOBY SLIGHT
+
+#+OPTIONS: toc:nil
+#+LaTeX_HEADER: \setlength{\parindent}{0in}
+#+LaTeX_HEADER: \usepackage[left=2cm, right=2cm, top=2cm, bottom=2cm]{geometry}
+
+Candidate should be able to answer at least half of these. They get
+progressively harder, so if they are not able to answer any of the first four or
+five, there's little point continuing.\\
+
+Some questions contain child questions that are harder extensions of the
+parent. Again, no point asking the child question if they can't answer the
+parent.\\
+
+Being able to answer half only applies to parent questions. ie) Candidate needs
+to able answer half of all parent questions, not parent and child questions.
+
+* Question
+
+/*Can you paraphrase the Unix philosophy?*/
+
+- Write programs that do one thing and do it well. Favor modular over monolithic
+  design.
+- Write programs to work together. Expect the output of every program to become
+  the input to another.
+- Write programs to handle text streams, because that is a universal interface.
+
+* Question
+
+ /*How should you signal to the user of your function or script that it executed
+ successfully or failed?*/\\
+
+Success = exit or return 0\\
+Failure = exit or return 1
+
+* Question
+
+/*Why is it good practice to always quote variables in bash?*/\\
+
+Prevent reinterpretation of special characters and word splitting
+
+** Question
+
+/*What is the difference between single and double quotes in bash*/\\
+
+Variables are expanded in double quotes. Variables are string literals in single
+quotes.
+
+* Question
+
+ /*What is the default scope of variables in bash?*/\\
+
+Global
+
+** Question
+
+/*What keyword is used to create a variable whose scope is limited to the
+function it's defined in?*/\\
+
+~local~
+
+* Question
+
+/*What is the ternary operator & what symbols are used to?*/\\
+
+A terse way of writing an if else conditional.
+
+#+BEGIN_SRC sh
+[ "$var1" -eq "$var2" ] && echo "equal" || echo "not equal"
+#+END_SRC
+
+
+** Question
+
+/*Is it good practice to use ternary operator's in scripts?*/\\
+
+No, because they are less readable.
+
+* Question
+
+/*What test arguments can be used to test if a variable is empty or not?*/\\
+
+~-z~ checks if variable is empty\\
+~-n~ checks if variable is not empty
+
+* Question
+
+/*Explain the difference between ~$*~ ~$@~ and ~$#~*/\\
+
+~$*~ = All args as single string\\
+~$@~ = All args as array\\
+~$#~ = Number of args\\
+
+* Question
+
+/*What is IFS? What is the default?*/\\
+
+Internal Field Seperator. Default is spaces, tabs and newlines.
+
+* Question
+
+/*How would you debug a script?*/
+
+#+BEGIN_SRC bash
+set -x
+#+END_SRC
+
+* Question
+
+/*How would you search for and replace all occurrences of a string in a file?*/
+
+#+BEGIN_SRC bash
+sed -i 's/foo/bar/g' file.txt
+#+END_SRC
+
+or
+
+#+BEGIN_SRC bash
+awk '{gsub(/foo/,"bar")}1' file.txt > tmpfile.txt
+mv tmpfile.txt file.txt
+#+END_SRC
+
+* Question
+
+/*How would you return a string from a function in bash?*/
+
+#+BEGIN_SRC bash
+  setter() {
+      echo "$myvar"
+  }
+
+  getter() {
+      myvar="$(myfunction)"
+  }
+#+END_SRC
+
+* Question
+
+/*How would you use find to delete all zip files in directory hierarchy?*/
+
+#+BEGIN_SRC bash
+find /path/to/dir -type f -name *.zip -delete
+#+END_SRC
+
+or
+
+#+BEGIN_SRC bash
+find /path/to/dir -type f -name *.zip -exec rm {} +
+#+END_SRC
+
+* Question
+
+/*Why is using the output from ls or find as the input to a forloop a bad idea?*/
+
+1) Word splitting
+2) Globbing characters
+
+** Question
+
+/*How would you write a avoid these issues?*/\\
+
+Use globbing
+
+#+BEGIN_SRC bash
+  for f in ./*.mp3; do
+      some command "$f"
+  done
+#+END_SRC
+
+for find example, change IFS and pipe find output into a while loop using read.
+
+#+BEGIN_SRC bash
+while IFS= read -r -d '' file; do
+  some command "$file"
+done < <(find . -type f -name '*.mp3' -print0)
+#+END_SRC
+
+* Question
+
+/*In a script how would you get the name of the script without its extension,
+preferably using bash's built-in parameter substitution rather than sed or
+awk?*/
+
+#+BEGIN_SRC bash
+echo "$(basename "${0%.*}")"
+#+END_SRC
+
+** Question
+
+/*How would you get the basename and dirname of the running script on a system
+where basename and dirname weren't available?*/
+
+#+BEGIN_SRC bash
+BASENAME=${0##*/}
+DIRNAME=${0%$BASENAME}
+echo "$BASENAME"
+echo "$DIRNAME"
+#+END_SRC
+
+* Question
+
+/*Vi or Emacs?*/\\
+
+Emacs. Obviously. Will accept Spacemacs...
+
+As long as the answer isn't nano or notepad* then we're good...
